@@ -1,0 +1,39 @@
+body {
+  font-family: Arial;
+  margin: 0;
+  padding: 20px;
+  background: #f4f4f4;
+}
+
+header {
+  text-align: center;
+}
+
+.create-post, .posts {
+  background: white;
+  padding: 15px;
+  margin: 20px auto;
+  width: 400px;
+  border-radius: 10px;
+}
+
+input, textarea {
+  width: 100%;
+  margin: 5px 0;
+  padding: 8px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.post-card {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 10px;
+}
