@@ -2,6 +2,27 @@ import { signupUser, loginUser } from "./auth.js";
 import { createPost, getPosts } from "./post.js";
 import { renderPosts } from "./ui.js";
 
+
+const role = localStorage.getItem("role");
+//protected
+if (!role) {
+  window.location.href = "auth.html";
+}
+
+const name = localStorage.getItem("name");
+
+document.getElementById("welcome").innerText =
+  `Welcome ${name} (${role})`;
+
+const createPostSection = document.querySelector(".create-post");
+
+const logoutBtn = document.getElementById("logoutBtn");
+
+logoutBtn.addEventListener("click", () => {
+  localStorage.clear();
+  window.location.href = "auth.html";
+});
+
 // Modal controls
 const modal = document.getElementById("authModal");
 document.getElementById("openAuth").onclick = () => modal.classList.remove("hidden");

@@ -123,7 +123,7 @@ signupTab.onclick = () => {
 /* SIGNUP */
 window.signup = async () => {
   const data = {
-    name: name.value,
+    name: document.getElementById("name").value, //due to inbrowser conflict we written this way instaed of directly accessing value in object
     collegeId: collegeId.value,
     email: email.value,
     graduationYear: Number(year.value),
@@ -142,6 +142,7 @@ window.signup = async () => {
   // switch to login after signup
   loginTab.click();
 };
+
 
 /* LOGIN */
 window.login = async () => {
@@ -163,8 +164,16 @@ window.login = async () => {
     return;
   }
 
-  // store role
-  localStorage.setItem("role", result.role);
+    if (result.role) {
+        localStorage.setItem("role", result.role);
+        localStorage.setItem("name", result.name);
+        window.location.href = "index.html";
+}
+
+    localStorage.setItem("role", result.role);
+    localStorage.setItem("name", result.name);
+    localStorage.setItem("userId", result.userId);
+
 
   // redirect to home page
   window.location.href = "index.html";

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Alumni Dashboard</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background-color: rgb(199, 199, 199);
+}
+
+/* NAVBAR */
+.navbar {
+  height: 60px;
+  background: #111;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.logo {
+  font-weight: bold;
+}
+
+.profile-btn {
+  background: #111;
+  color: white;
+  border: 1px solid white;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.profile-btn:hover {
+  background: white;
+  color: black;
+}
+
+/* LAYOUT */
+.container {
+  display: flex;
+  height: calc(100vh - 60px);
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 20%;
+  background: #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+}
+
+.sidebar button {
+  margin: 8px 0;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  background: white;
+  text-align: left;
+}
+
+.sidebar button:hover {
+  background: black;
+  color: white;
+}
+
+/* CONTENT */
+.content {
+  width: 80%;
+  padding: 25px;
+}
+
+/* TOP WELCOME SECTION */
+.welcome-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+/* LEFT GREETING */
+.welcome-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.welcome-main {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.welcome-sub {
+  color: gray;
+  margin-top: 5px;
+}
+
+/* RIGHT COLLEGE INFO */
+.college-info {
+  text-align: right;
+}
+
+.course {
+  font-weight: bold;
+}
+
+.university {
+  color: gray;
+  margin-top: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">Alumni Portal</div>
+
+  <button class="profile-btn" onclick="openProfile()">
+    Profile
+  </button>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <button onclick="showSection('dashboard')">Dashboard</button>
+    <button onclick="showSection('connect')">Connect Hub</button>
+    <button onclick="showSection('jobs')">Job Portal</button>
+    <button onclick="showSection('meetup')">Alumni Meetup</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- WELCOME SECTION -->
+    <div class="welcome-box">
+
+      <!-- LEFT -->
+      <div class="welcome-text">
+        <div class="welcome-main" id="welcome"></div>
+        <div class="welcome-sub">Glad to have you back</div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="college-info">
+        <div class="course">CSE | Full Stack Web Development</div>
+        <div class="university">Lovely Professional University, Punjab</div>
+      </div>
+
+    </div>
+
+    <!-- DYNAMIC SECTION -->
+    <div id="mainSection" style="margin-top:20px;"></div>
+
+  </div>
+</div>
+
+<script>
+const name = localStorage.getItem("name");
+
+document.getElementById("welcome").innerText =
+  `Welcome, ${name || "User"}`;
+
+/* DEFAULT DASHBOARD CONTENT */
+function loadDashboard() {
+  document.getElementById("mainSection").innerHTML =
+    "<h3>Dashboard Overview</h3><p>Welcome to your alumni dashboard.</p>";
+}
+
+/* SIDEBAR NAV */
+function showSection(section) {
+
+  if (section === "dashboard") {
+    loadDashboard();
+  }
+
+  else if (section === "connect") {
+    document.getElementById("mainSection").innerHTML =
+      "<h3>Connect Hub</h3><p>Networking section coming soon.</p>";
+  }
+
+  else if (section === "jobs") {
+    document.getElementById("mainSection").innerHTML =
+      "<h3>Job Portal</h3><p>Job listings coming soon.</p>";
+  }
+
+  else if (section === "meetup") {
+    document.getElementById("mainSection").innerHTML =
+      "<h3>Alumni Meetup</h3><p>Events coming soon.</p>";
+  }
+}
+
+/* PROFILE */
+function openProfile() {
+  alert("Profile page coming later");
+}
+
+/* LOGOUT */
+function logout() {
+  localStorage.clear();
+  window.location.href = "../auth.html";
+}
+
+/* DEFAULT LOAD */
+loadDashboard();
+</script>
+
+</body>
+</html>
