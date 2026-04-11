@@ -53,4 +53,44 @@ router.post("/login", async (req, res) => {
   });
 });
 
+// GET STATS (TOTAL ALUMNI)
+router.get("/stats", async (req, res) => {
+  try {
+    const totalAlumni = await User.countDocuments({ role: "alumni" });
+    res.json({ totalAlumni });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET PROFILE
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password");
+    if(!user) return res.status(404).json({ error: "User not found" });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// UPDATE PROFILE
+router.put("/profile/:id", async (req, res) => {
+  try {
+    const { aboutMe, department, contactNumber, company, jobType } = req.body;
+    
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { aboutMe, department, contactNumber, company, jobType },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if(!user) return res.status(404).json({ error: "User not found" });
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
