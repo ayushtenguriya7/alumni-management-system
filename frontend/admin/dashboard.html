@@ -1,12 +1,25 @@
-<h2>Admin Dashboard</h2>
-
-<p>Full control panel</p>
-
-<button onclick="logout()">Logout</button>
-
-<script>
-function logout() {
-  localStorage.clear();
-  window.location.href = "../index.html";
-}
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — AlumniPortal Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0a0a0f; --surface:#111118; --card:#1a1a27; --border:#2a2a3d; --text:#f0f0ff; --muted:#8888aa; --accent:#7c3aed; --red:#ef4444; }
+    body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; text-align:center; gap:16px; }
+    .logo { font-size:1.5rem; font-weight:800; background:linear-gradient(135deg,#a78bfa,#818cf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    h1 { font-size:1.3rem; font-weight:700; }
+    p { color: var(--muted); font-size:0.95rem; }
+    .logout-btn { padding:10px 26px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:8px; color:var(--red); font-family:'Outfit'; font-weight:700; cursor:pointer; transition:all 0.2s; margin-top:8px; }
+    .logout-btn:hover { background:rgba(239,68,68,0.2); }
+  </style>
+</head>
+<body>
+  <div class="logo">AlumniPortal Pro</div>
+  <h1>Admin Dashboard</h1>
+  <p>Admin panel is under construction.</p>
+  <button class="logout-btn" onclick="localStorage.clear(); window.location.href='../index.html'">Logout</button>
+</body>
+</html>

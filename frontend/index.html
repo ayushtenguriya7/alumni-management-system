@@ -1,349 +1,503 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AlumniPortal Pro - Authentication</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-<style>
-  * {
-    box-sizing: border-box;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AlumniPortal Pro — Connect. Grow. Give Back.</title>
+  <meta name="description" content="AlumniPortal Pro is the premier alumni management system connecting graduates, students, and mentors at Lovely Professional University.">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    margin: 0;
-    font-family: 'Outfit', Arial, sans-serif;
-    background: #f4f6f8;
-    color: #333333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
-  }
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --card: #1a1a27;
+      --border: #2a2a3d;
+      --text: #f0f0ff;
+      --muted: #8888aa;
+      --accent: #7c3aed;
+      --accent2: #4f46e5;
+      --green: #10b981;
+      --red: #ef4444;
+    }
 
-  /* Modal */
-  .modal {
-    background: #ffffff;
-    padding: 40px;
-    width: 380px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e2e8f0;
-    animation: fadeIn 0.6s ease-out;
-  }
+    html { scroll-behavior: smooth; }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+    body {
+      font-family: 'Outfit', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
 
-  h2 {
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 5px;
-    font-size: 1.8rem;
-    color: #0f172a;
-    font-weight: 700;
-  }
-  
-  .subtitle {
-    text-align: center;
-    color: #64748b;
-    font-size: 0.95rem;
-    margin-top: 0;
-    margin-bottom: 25px;
-  }
+    /* ─── NAVBAR ─────────────────────────────── */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 68px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 60px;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 1.4rem; font-weight: 800;
+      background: linear-gradient(135deg, #a78bfa, #818cf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+    .btn-ghost {
+      padding: 9px 22px; background: transparent;
+      border: 1px solid var(--border); border-radius: 8px;
+      color: var(--muted); font-family: 'Outfit'; font-weight: 600;
+      font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
+    .btn-primary {
+      padding: 9px 22px;
+      background: var(--accent); border: none; border-radius: 8px;
+      color: #fff; font-family: 'Outfit'; font-weight: 700;
+      font-size: 0.9rem; cursor: pointer; transition: all 0.25s;
+      box-shadow: 0 0 20px rgba(124,58,237,0.35);
+    }
+    .btn-primary:hover { background: #6d28d9; box-shadow: 0 0 30px rgba(124,58,237,0.55); transform: translateY(-1px); }
 
-  /* Tabs */
-  .tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 25px;
-    background: #f1f5f9;
-    padding: 6px;
-    border-radius: 12px;
-  }
+    /* ─── HERO ───────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; padding: 120px 40px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; width: 700px; height: 700px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      animation: pulse 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes pulse { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.6;} 50%{transform:translate(-50%,-50%) scale(1.15);opacity:1;} }
 
-  .tabs button {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background: transparent;
-    color: #64748b;
-    font-family: 'Outfit', Arial, sans-serif;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-  }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 20px;
+      background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4);
+      color: #a78bfa; font-size: 0.85rem; font-weight: 600; margin-bottom: 30px;
+    }
+    .hero-badge span { width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block; animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
-  .tabs button.hover {
-    color: #0f172a;
-  }
+    .hero h1 {
+      font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 800; line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    .hero h1 .grad {
+      background: linear-gradient(135deg, #a78bfa 0%, #818cf8 50%, #60a5fa 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.2rem; color: var(--muted); max-width: 600px; line-height: 1.7;
+      margin-bottom: 40px;
+    }
+    .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .btn-hero-primary {
+      padding: 15px 36px; background: var(--accent); border: none; border-radius: 10px;
+      color: #fff; font-family: 'Outfit'; font-weight: 700; font-size: 1rem;
+      cursor: pointer; transition: all 0.3s;
+      box-shadow: 0 0 30px rgba(124,58,237,0.4);
+    }
+    .btn-hero-primary:hover { background: #6d28d9; transform: translateY(-3px); box-shadow: 0 0 45px rgba(124,58,237,0.6); }
+    .btn-hero-secondary {
+      padding: 15px 36px; background: transparent;
+      border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-family: 'Outfit'; font-weight: 600; font-size: 1rem;
+      cursor: pointer; transition: all 0.3s;
+    }
+    .btn-hero-secondary:hover { border-color: var(--accent); background: rgba(124,58,237,0.1); }
 
-  .tabs button.active {
-    background: #ffffff;
-    color: #3b82f6;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  }
+    /* ─── STATS ──────────────────────────────── */
+    .stats {
+      display: flex; justify-content: center; gap: 60px; flex-wrap: wrap;
+      padding: 60px 40px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-item { text-align: center; }
+    .stat-item h3 { font-size: 2.8rem; font-weight: 800; color: #a78bfa; margin-bottom: 6px; }
+    .stat-item p { color: var(--muted); font-size: 0.95rem; }
 
-  /* Inputs */
-  input, select {
-    width: 100%;
-    margin: 8px 0;
-    padding: 13px 15px;
-    background: #f8fafc;
-    border: 1px solid #cbd5e1;
-    color: #334155;
-    border-radius: 10px;
-    font-family: 'Outfit', Arial, sans-serif;
-    outline: none;
-    transition: border-color 0.3s ease;
-    box-sizing: border-box;
-  }
-  
-  input::placeholder { color: #94a3b8; }
-  input:focus, select:focus { 
-    border-color: #3b82f6; 
-    background: #ffffff;
-  }
+    /* ─── FEATURES ───────────────────────────── */
+    .section { padding: 90px 40px; max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      text-align: center; color: #a78bfa; font-size: 0.85rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px;
+    }
+    .section h2 {
+      text-align: center; font-size: 2.4rem; font-weight: 800; margin-bottom: 16px;
+    }
+    .section .subtitle { text-align: center; color: var(--muted); font-size: 1.05rem; max-width: 580px; margin: 0 auto 60px; }
 
-  /* Button */
-  button.submit {
-    width: 100%;
-    padding: 14px;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    margin-top: 15px;
-    cursor: pointer;
-    font-family: 'Outfit', Arial, sans-serif;
-    font-weight: 600;
-    font-size: 1.05rem;
-    transition: all 0.3s ease;
-  }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;
+    }
+    .feature-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 30px; transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+    }
+    .feature-card:hover { border-color: rgba(124,58,237,0.4); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    .feature-card:hover::before { transform: scaleX(1); }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: rgba(124,58,237,0.15); display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 18px;
+    }
+    .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; }
+    .feature-card p { color: var(--muted); font-size: 0.92rem; line-height: 1.65; }
 
-  button.submit:hover {
-    background: #2563eb;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-    transform: translateY(-2px);
-  }
+    /* ─── FOOTER ─────────────────────────────── */
+    .footer {
+      text-align: center; padding: 40px;
+      border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem;
+    }
+    .footer strong { color: var(--text); }
 
-  /* Hide */
-  .hidden {
-    display: none;
-  }
+    /* ─── MODAL OVERLAY ──────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+      display: flex; justify-content: center; align-items: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .modal-overlay.show { opacity: 1; pointer-events: auto; }
 
-  /* Toast Notification */
-  .toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 15px 25px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    color: #334155;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border-left: 4px solid #3b82f6;
-    transform: translateX(150%);
-    transition: transform 0.3s ease;
-    z-index: 1000;
-    font-family: 'Outfit', Arial, sans-serif;
-  }
-  .toast.error {
-    border-left-color: #ef4444;
-  }
-  .toast.success {
-    border-left-color: #10b981;
-  }
-  .toast.show {
-    transform: translateX(0);
-  }
-</style>
+    .auth-modal {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 40px; width: 100%; max-width: 420px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+      transform: translateY(24px); transition: transform 0.35s cubic-bezier(.17,.67,.37,1.24);
+    }
+    .modal-overlay.show .auth-modal { transform: translateY(0); }
+
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px;
+    }
+    .modal-header h2 { font-size: 1.6rem; font-weight: 700; }
+    .modal-header p { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+    .close-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 1.4rem; cursor: pointer; line-height: 1; padding: 4px;
+      transition: color 0.2s;
+    }
+    .close-btn:hover { color: var(--text); }
+
+    /* Tab switcher inside modal */
+    .tabs {
+      display: flex; background: #0f0f1a; border-radius: 10px; padding: 5px; gap: 6px; margin-bottom: 24px;
+    }
+    .tabs button {
+      flex: 1; padding: 9px; border: none; border-radius: 7px; cursor: pointer;
+      background: transparent; color: var(--muted); font-family: 'Outfit';
+      font-weight: 600; font-size: 0.9rem; transition: all 0.25s;
+    }
+    .tabs button.active { background: var(--accent); color: #fff; box-shadow: 0 0 12px rgba(124,58,237,0.4); }
+
+    /* Role tabs (smaller) */
+    .role-tabs {
+      display: flex; background: rgba(255,255,255,0.04); border-radius: 8px; padding: 4px; gap: 4px; margin-bottom: 16px;
+    }
+    .role-tabs button {
+      flex: 1; padding: 7px; border: none; border-radius: 6px; cursor: pointer;
+      background: transparent; color: var(--muted); font-family: 'Outfit';
+      font-weight: 600; font-size: 0.85rem; transition: all 0.25s;
+    }
+    .role-tabs button.active { background: rgba(124,58,237,0.3); color: #c4b5fd; }
+
+    /* Inputs */
+    .auth-modal input, .auth-modal select {
+      width: 100%; margin: 6px 0; padding: 12px 14px;
+      background: #0f0f1a; border: 1px solid var(--border);
+      color: var(--text); border-radius: 9px;
+      font-family: 'Outfit'; font-size: 0.95rem; outline: none;
+      transition: border-color 0.2s;
+    }
+    .auth-modal input::placeholder { color: #55556a; }
+    .auth-modal input:focus, .auth-modal select:focus { border-color: var(--accent); background: #13131f; }
+    .auth-modal select option { background: #1a1a27; }
+
+    .auth-modal .submit-btn {
+      width: 100%; padding: 13px; margin-top: 14px;
+      background: var(--accent); border: none; border-radius: 9px;
+      color: #fff; font-family: 'Outfit'; font-weight: 700; font-size: 1rem;
+      cursor: pointer; transition: all 0.25s;
+      box-shadow: 0 0 20px rgba(124,58,237,0.3);
+    }
+    .auth-modal .submit-btn:hover { background: #6d28d9; box-shadow: 0 0 30px rgba(124,58,237,0.5); transform: translateY(-1px); }
+
+    .hidden { display: none !important; }
+
+    .toast {
+      position: fixed; top: 24px; right: 24px; z-index: 9999;
+      padding: 14px 22px; border-radius: 10px;
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text); font-size: 0.9rem; font-weight: 600;
+      border-left: 4px solid var(--accent);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      opacity: 0; pointer-events: none;
+      transform: translateY(-20px); transition: all 0.3s;
+    }
+    .toast.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .toast.success { border-left-color: var(--green); }
+    .toast.error { border-left-color: var(--red); }
+  </style>
 </head>
-
 <body>
 
+<!-- Toast -->
 <div class="toast" id="toastMsg"></div>
 
-<div class="modal">
-  <h2>AlumniPortal Pro</h2>
-  <p class="subtitle">Welcome to the network</p>
-  <div class="tabs">
-    <button id="loginTab" class="active">Login</button>
-    <button id="signupTab">Signup</button>
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">AlumniPortal Pro</div>
+  <div class="nav-actions">
+    <button class="btn-ghost" id="navLoginBtn">Login</button>
+    <button class="btn-primary" id="navSignupBtn">Get Started</button>
   </div>
+</nav>
 
-  <!-- LOGIN -->
-  <div id="loginForm">
-    <input id="loginId" placeholder="College ID / Email">
-    <input id="loginPass" type="password" placeholder="Password">
-    <button class="submit" onclick="login()">Access Portal</button>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge"><span></span> Live Platform — LPU Alumni Network</div>
+  <h1>Where <span class="grad">Alumni</span> &amp;<br>Students Connect</h1>
+  <p>Discover mentors, unlock career opportunities, give back through donations, and stay connected with the LPU community.</p>
+  <div class="hero-ctas">
+    <button class="btn-hero-primary" id="heroSignupBtn">Get Started — It's Free</button>
+    <button class="btn-hero-secondary" id="heroLoginBtn">Sign In</button>
   </div>
+</section>
 
-  <!-- SIGNUP -->
-  <div id="signupForm" class="hidden">
-    <div class="tabs" style="margin-bottom: 15px; background: #e2e8f0;">
-      <button id="roleStudentTab" class="active" onclick="setRole('student')" type="button">Student</button>
-      <button id="roleAlumniTab" onclick="setRole('alumni')" type="button">Alumni</button>
-    </div>
-    <input type="hidden" id="signupRole" value="student">
-    <input id="name" placeholder="Full Name">
-    <input id="email" placeholder="Email">
-    <input id="collegeId" placeholder="College ID">
-    <input id="year" type="number" placeholder="Graduation Year (e.g. 2024)" class="hidden">
-    <input id="password" type="password" placeholder="Password">
-    <button class="submit" onclick="signup()">Create Account</button>
-  </div>
-
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item"><h3>2,400+</h3><p>Alumni Registered</p></div>
+  <div class="stat-item"><h3>850+</h3><p>Students Enrolled</p></div>
+  <div class="stat-item"><h3>120+</h3><p>Active Mentors</p></div>
+  <div class="stat-item"><h3>$48K+</h3><p>Donations Raised</p></div>
 </div>
 
-<script type="module">
-const BASE_URL = "http://localhost:5000/api/users";
+<!-- FEATURES -->
+<div class="section">
+  <div class="section-label">Features</div>
+  <h2>Everything the network needs</h2>
+  <p class="subtitle">From career opportunities to mentorship bookings, the portal covers every touchpoint of the alumni journey.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <h3>Smart Opportunities Board</h3>
+      <p>Alumni post jobs and internships. Students browse, filter by role, location, type, and apply in one click.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧑‍🏫</div>
+      <h3>Mentor Booking System</h3>
+      <p>Students discover active mentors and book appointment slots with topics, dates, and Google Meet links.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <h3>Alumni Directory</h3>
+      <p>Search the complete alumni network by course, graduation year, or email. See careers, companies, and connect.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💸</div>
+      <h3>Donation Portal</h3>
+      <p>Alumni contribute to causes like research, education, and disaster relief. Every donation is tracked in real time.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎉</div>
+      <h3>Events Hub</h3>
+      <p>Browse and register for university events. Filter by category, date, and capacity. Never miss what matters.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👤</div>
+      <h3>Rich Profile Pages</h3>
+      <p>Alumni maintain detailed profiles — company, job post, LinkedIn, graduation year, bio, and profile photo.</p>
+    </div>
+  </div>
+</div>
 
-/* AUTO REDIRECT */
-const storedRole = localStorage.getItem("role");
-if (storedRole === "admin") window.location.href = "admin/dashboard.html";
-else if (storedRole === "alumni") window.location.href = "alumni/dashboard.html";
-else if (storedRole === "student") window.location.href = "student/dashboard.html";
+<!-- FOOTER -->
+<footer class="footer">
+  &copy; 2026 <strong>AlumniPortal Pro</strong> · Lovely Professional University · Built for the Class Beyond
+</footer>
 
-/* TOAST NOTIFICATION */
-const toast = document.getElementById("toastMsg");
-window.showToast = (msg, type = 'success') => {
-  toast.innerText = msg;
-  toast.className = `toast show ${type}`;
-  setTimeout(() => toast.classList.remove("show"), 3000);
-};
+<!-- ─── AUTH MODAL ─── -->
+<div class="modal-overlay" id="authOverlay">
+  <div class="auth-modal">
+    <div class="modal-header">
+      <div>
+        <h2 id="modalTitle">Welcome Back</h2>
+        <p id="modalSubtitle">Sign in to your portal account</p>
+      </div>
+      <button class="close-btn" id="closeModalBtn">&times;</button>
+    </div>
 
-/* TAB SWITCH */
-const loginTab = document.getElementById("loginTab");
-const signupTab = document.getElementById("signupTab");
-const loginForm = document.getElementById("loginForm");
-const signupForm = document.getElementById("signupForm");
+    <!-- Main tab switcher -->
+    <div class="tabs">
+      <button id="loginTabBtn" class="active">Login</button>
+      <button id="signupTabBtn">Sign Up</button>
+    </div>
 
-loginTab.onclick = () => {
-  loginForm.classList.remove("hidden");
-  signupForm.classList.add("hidden");
-  loginTab.classList.add("active");
-  signupTab.classList.remove("active");
-};
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <input id="loginId" placeholder="College ID / Email">
+      <input id="loginPass" type="password" placeholder="Password">
+      <button class="submit-btn" onclick="login()">Access Portal</button>
+    </div>
 
-signupTab.onclick = () => {
-  signupForm.classList.remove("hidden");
-  loginForm.classList.add("hidden");
-  signupTab.classList.add("active");
-  loginTab.classList.remove("active");
-};
+    <!-- SIGNUP FORM -->
+    <div id="signupForm" class="hidden">
+      <div class="role-tabs">
+        <button id="roleStudentTab" class="active" onclick="setRole('student')">Student</button>
+        <button id="roleAlumniTab" onclick="setRole('alumni')">Alumni</button>
+      </div>
+      <input type="hidden" id="signupRole" value="student">
+      <input id="name" placeholder="Full Name">
+      <input id="email" placeholder="Email">
+      <input id="collegeId" placeholder="College ID">
+      <input id="year" type="number" placeholder="Graduation Year (e.g. 2024)" class="hidden">
+      <input id="password" type="password" placeholder="Password">
+      <button class="submit-btn" onclick="signup()">Create Account</button>
+    </div>
+  </div>
+</div>
 
-/* SET ROLE */
-window.setRole = (role) => {
-  document.getElementById("signupRole").value = role;
-  
-  const studentTab = document.getElementById("roleStudentTab");
-  const alumniTab = document.getElementById("roleAlumniTab");
+<script>
+  const BASE_URL = "http://localhost:5000/api/users";
 
-  if (role === "student") {
-    studentTab.classList.add("active");
-    alumniTab.classList.remove("active");
-  } else {
-    alumniTab.classList.add("active");
-    studentTab.classList.remove("active");
+  /* ── AUTO REDIRECT ── */
+  const storedRole = localStorage.getItem("role");
+  if (storedRole === "admin") window.location.href = "admin/dashboard.html";
+  else if (storedRole === "alumni") window.location.href = "alumni/dashboard.html";
+  else if (storedRole === "student") window.location.href = "student/dashboard.html";
+
+  /* ── TOAST ── */
+  const toast = document.getElementById("toastMsg");
+  function showToast(msg, type = 'success') {
+    toast.innerText = msg;
+    toast.className = `toast show ${type}`;
+    setTimeout(() => toast.classList.remove("show"), 3200);
   }
-  
-  window.toggleSignupFields();
-};
 
-/* TOGGLE FIELDS */
-window.toggleSignupFields = () => {
-  const role = document.getElementById("signupRole").value;
-  const collegeIdInput = document.getElementById("collegeId");
-  const yearInput = document.getElementById("year");
+  /* ── MODAL OPEN/CLOSE ── */
+  const overlay = document.getElementById("authOverlay");
+  const loginTabBtn = document.getElementById("loginTabBtn");
+  const signupTabBtn = document.getElementById("signupTabBtn");
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
 
-  if (role === "student") {
-    collegeIdInput.classList.remove("hidden");
-    yearInput.classList.add("hidden");
-  } else {
-    collegeIdInput.classList.add("hidden");
-    yearInput.classList.remove("hidden");
+  function openModal(tab = 'login') {
+    overlay.classList.add("show");
+    if (tab === 'signup') switchToSignup();
+    else switchToLogin();
   }
-};
 
-/* SIGNUP */
-window.signup = async () => {
-  const role = document.getElementById("signupRole").value;
-  const data = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    password: document.getElementById("password").value,
-    role: role
+  function switchToLogin() {
+    loginForm.classList.remove("hidden");
+    signupForm.classList.add("hidden");
+    loginTabBtn.classList.add("active");
+    signupTabBtn.classList.remove("active");
+    document.getElementById("modalTitle").innerText = "Welcome Back";
+    document.getElementById("modalSubtitle").innerText = "Sign in to your portal account";
+  }
+
+  function switchToSignup() {
+    signupForm.classList.remove("hidden");
+    loginForm.classList.add("hidden");
+    signupTabBtn.classList.add("active");
+    loginTabBtn.classList.remove("active");
+    document.getElementById("modalTitle").innerText = "Create Account";
+    document.getElementById("modalSubtitle").innerText = "Join the AlumniPortal network";
+  }
+
+  document.getElementById("closeModalBtn").onclick = () => overlay.classList.remove("show");
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.classList.remove("show"); });
+
+  loginTabBtn.onclick = switchToLogin;
+  signupTabBtn.onclick = switchToSignup;
+
+  document.getElementById("navLoginBtn").onclick = () => openModal('login');
+  document.getElementById("navSignupBtn").onclick = () => openModal('signup');
+  document.getElementById("heroLoginBtn").onclick = () => openModal('login');
+  document.getElementById("heroSignupBtn").onclick = () => openModal('signup');
+
+  /* ── SET ROLE ── */
+  window.setRole = (role) => {
+    document.getElementById("signupRole").value = role;
+    document.getElementById("roleStudentTab").classList.toggle("active", role === "student");
+    document.getElementById("roleAlumniTab").classList.toggle("active", role === "alumni");
+    toggleSignupFields();
   };
 
-  if (role === "student") {
-    data.collegeId = document.getElementById("collegeId").value;
-  } else {
-    data.graduationYear = Number(document.getElementById("year").value);
+  function toggleSignupFields() {
+    const role = document.getElementById("signupRole").value;
+    document.getElementById("collegeId").classList.toggle("hidden", role !== "student");
+    document.getElementById("year").classList.toggle("hidden", role !== "alumni");
   }
 
-  try {
-    const res = await fetch(`${BASE_URL}/register`, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(data)
-    });
+  /* ── SIGNUP ── */
+  window.signup = async () => {
+    const role = document.getElementById("signupRole").value;
+    const data = {
+      name: document.getElementById("name").value,
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value,
+      role
+    };
+    if (role === "student") data.collegeId = document.getElementById("collegeId").value;
+    else data.graduationYear = Number(document.getElementById("year").value);
 
-    const result = await res.json();
-    
-    if (result.error) {
-      showToast(result.error, 'error');
-    } else {
-      showToast(result.message || "Signup successful", 'success');
-      setTimeout(() => loginTab.click(), 1000);
-    }
-  } catch (err) {
-    showToast("Network error. Is backend running?", 'error');
-  }
-};
-
-/* LOGIN */
-window.login = async () => {
-  const data = {
-    loginId: document.getElementById("loginId").value,
-    password: document.getElementById("loginPass").value
+    try {
+      const res = await fetch(`${BASE_URL}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.error) return showToast(result.error, 'error');
+      showToast(result.message || "Account created!", 'success');
+      setTimeout(switchToLogin, 1100);
+    } catch { showToast("Network error. Is the backend running?", 'error'); }
   };
 
-  try {
-    const res = await fetch(`${BASE_URL}/login`, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(data)
-    });
-
-    const result = await res.json();
-
-    if (result.error) {
-      showToast(result.error, 'error');
-      return;
-    }
-
-    if (result.role) {
+  /* ── LOGIN ── */
+  window.login = async () => {
+    const data = {
+      loginId: document.getElementById("loginId").value,
+      password: document.getElementById("loginPass").value
+    };
+    try {
+      const res = await fetch(`${BASE_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.error) return showToast(result.error, 'error');
+      if (result.role) {
         showToast("Login successful! Redirecting...", 'success');
         localStorage.setItem("role", result.role);
         localStorage.setItem("name", result.name);
         localStorage.setItem("userId", result.userId);
-        
-        // redirect to index.html which routes according to role
         setTimeout(() => window.location.href = "index.html", 1000);
-    }
-  } catch (err) {
-    showToast("Network error. Is backend running?", 'error');
-  }
-};
+      }
+    } catch { showToast("Network error. Is the backend running?", 'error'); }
+  };
 </script>
-
 </body>
 </html>
