@@ -9,25 +9,14 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --bg: #0a0a0f;
-      --surface: #111118;
-      --card: #1a1a27;
-      --border: #2a2a3d;
-      --text: #f0f0ff;
-      --muted: #8888aa;
-      --accent: #7c3aed;
-      --accent2: #4f46e5;
-      --green: #10b981;
-      --red: #ef4444;
-    }
+    
 
     html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Outfit', Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      background: #0a0a0f;
+      color: #f0f0ff;
       overflow-x: hidden;
     }
 
@@ -39,7 +28,7 @@
       padding: 0 60px;
       background: rgba(10,10,15,0.85);
       backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid #2a2a3d;
     }
     .nav-logo {
       font-size: 1.4rem; font-weight: 800;
@@ -50,14 +39,14 @@
     .nav-actions { display: flex; gap: 12px; align-items: center; }
     .btn-ghost {
       padding: 9px 22px; background: transparent;
-      border: 1px solid var(--border); border-radius: 8px;
-      color: var(--muted); font-family: 'Outfit'; font-weight: 600;
+      border: 1px solid #2a2a3d; border-radius: 8px;
+      color: #8888aa; font-family: 'Outfit'; font-weight: 600;
       font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
     }
-    .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
+    .btn-ghost:hover { border-color: #7c3aed; color: #f0f0ff; }
     .btn-primary {
       padding: 9px 22px;
-      background: var(--accent); border: none; border-radius: 8px;
+      background: #7c3aed; border: none; border-radius: 8px;
       color: #fff; font-family: 'Outfit'; font-weight: 700;
       font-size: 0.9rem; cursor: pointer; transition: all 0.25s;
       box-shadow: 0 0 20px rgba(124,58,237,0.35);
@@ -99,12 +88,12 @@
       background-clip: text;
     }
     .hero p {
-      font-size: 1.2rem; color: var(--muted); max-width: 600px; line-height: 1.7;
+      font-size: 1.2rem; color: #8888aa; max-width: 600px; line-height: 1.7;
       margin-bottom: 40px;
     }
     .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
     .btn-hero-primary {
-      padding: 15px 36px; background: var(--accent); border: none; border-radius: 10px;
+      padding: 15px 36px; background: #7c3aed; border: none; border-radius: 10px;
       color: #fff; font-family: 'Outfit'; font-weight: 700; font-size: 1rem;
       cursor: pointer; transition: all 0.3s;
       box-shadow: 0 0 30px rgba(124,58,237,0.4);
@@ -112,22 +101,22 @@
     .btn-hero-primary:hover { background: #6d28d9; transform: translateY(-3px); box-shadow: 0 0 45px rgba(124,58,237,0.6); }
     .btn-hero-secondary {
       padding: 15px 36px; background: transparent;
-      border: 1px solid var(--border); border-radius: 10px;
-      color: var(--text); font-family: 'Outfit'; font-weight: 600; font-size: 1rem;
+      border: 1px solid #2a2a3d; border-radius: 10px;
+      color: #f0f0ff; font-family: 'Outfit'; font-weight: 600; font-size: 1rem;
       cursor: pointer; transition: all 0.3s;
     }
-    .btn-hero-secondary:hover { border-color: var(--accent); background: rgba(124,58,237,0.1); }
+    .btn-hero-secondary:hover { border-color: #7c3aed; background: rgba(124,58,237,0.1); }
 
     /* ─── STATS ──────────────────────────────── */
     .stats {
       display: flex; justify-content: center; gap: 60px; flex-wrap: wrap;
       padding: 60px 40px;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      border-top: 1px solid #2a2a3d;
+      border-bottom: 1px solid #2a2a3d;
     }
     .stat-item { text-align: center; }
     .stat-item h3 { font-size: 2.8rem; font-weight: 800; color: #a78bfa; margin-bottom: 6px; }
-    .stat-item p { color: var(--muted); font-size: 0.95rem; }
+    .stat-item p { color: #8888aa; font-size: 0.95rem; }
 
     /* ─── FEATURES ───────────────────────────── */
     .section { padding: 90px 40px; max-width: 1200px; margin: 0 auto; }
@@ -138,18 +127,18 @@
     .section h2 {
       text-align: center; font-size: 2.4rem; font-weight: 800; margin-bottom: 16px;
     }
-    .section .subtitle { text-align: center; color: var(--muted); font-size: 1.05rem; max-width: 580px; margin: 0 auto 60px; }
+    .section .subtitle { text-align: center; color: #8888aa; font-size: 1.05rem; max-width: 580px; margin: 0 auto 60px; }
 
     .features-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;
     }
     .feature-card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      background: #1a1a27; border: 1px solid #2a2a3d; border-radius: 16px;
       padding: 30px; transition: all 0.3s; position: relative; overflow: hidden;
     }
     .feature-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      background: linear-gradient(90deg, #7c3aed, #4f46e5);
       transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
     }
     .feature-card:hover { border-color: rgba(124,58,237,0.4); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
@@ -160,14 +149,14 @@
       font-size: 1.5rem; margin-bottom: 18px;
     }
     .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; }
-    .feature-card p { color: var(--muted); font-size: 0.92rem; line-height: 1.65; }
+    .feature-card p { color: #8888aa; font-size: 0.92rem; line-height: 1.65; }
 
     /* ─── FOOTER ─────────────────────────────── */
     .footer {
       text-align: center; padding: 40px;
-      border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem;
+      border-top: 1px solid #2a2a3d; color: #8888aa; font-size: 0.9rem;
     }
-    .footer strong { color: var(--text); }
+    .footer strong { color: #f0f0ff; }
 
     /* ─── MODAL OVERLAY ──────────────────────── */
     .modal-overlay {
@@ -179,7 +168,7 @@
     .modal-overlay.show { opacity: 1; pointer-events: auto; }
 
     .auth-modal {
-      background: var(--card); border: 1px solid var(--border);
+      background: #1a1a27; border: 1px solid #2a2a3d;
       border-radius: 18px; padding: 40px; width: 100%; max-width: 420px;
       box-shadow: 0 30px 60px rgba(0,0,0,0.6);
       transform: translateY(24px); transition: transform 0.35s cubic-bezier(.17,.67,.37,1.24);
@@ -190,13 +179,13 @@
       display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px;
     }
     .modal-header h2 { font-size: 1.6rem; font-weight: 700; }
-    .modal-header p { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+    .modal-header p { color: #8888aa; font-size: 0.9rem; margin-top: 4px; }
     .close-btn {
-      background: transparent; border: none; color: var(--muted);
+      background: transparent; border: none; color: #8888aa;
       font-size: 1.4rem; cursor: pointer; line-height: 1; padding: 4px;
       transition: color 0.2s;
     }
-    .close-btn:hover { color: var(--text); }
+    .close-btn:hover { color: #f0f0ff; }
 
     /* Tab switcher inside modal */
     .tabs {
@@ -204,10 +193,10 @@
     }
     .tabs button {
       flex: 1; padding: 9px; border: none; border-radius: 7px; cursor: pointer;
-      background: transparent; color: var(--muted); font-family: 'Outfit';
+      background: transparent; color: #8888aa; font-family: 'Outfit';
       font-weight: 600; font-size: 0.9rem; transition: all 0.25s;
     }
-    .tabs button.active { background: var(--accent); color: #fff; box-shadow: 0 0 12px rgba(124,58,237,0.4); }
+    .tabs button.active { background: #7c3aed; color: #fff; box-shadow: 0 0 12px rgba(124,58,237,0.4); }
 
     /* Role tabs (smaller) */
     .role-tabs {
@@ -215,7 +204,7 @@
     }
     .role-tabs button {
       flex: 1; padding: 7px; border: none; border-radius: 6px; cursor: pointer;
-      background: transparent; color: var(--muted); font-family: 'Outfit';
+      background: transparent; color: #8888aa; font-family: 'Outfit';
       font-weight: 600; font-size: 0.85rem; transition: all 0.25s;
     }
     .role-tabs button.active { background: rgba(124,58,237,0.3); color: #c4b5fd; }
@@ -223,18 +212,18 @@
     /* Inputs */
     .auth-modal input, .auth-modal select {
       width: 100%; margin: 6px 0; padding: 12px 14px;
-      background: #0f0f1a; border: 1px solid var(--border);
-      color: var(--text); border-radius: 9px;
+      background: #0f0f1a; border: 1px solid #2a2a3d;
+      color: #f0f0ff; border-radius: 9px;
       font-family: 'Outfit'; font-size: 0.95rem; outline: none;
       transition: border-color 0.2s;
     }
     .auth-modal input::placeholder { color: #55556a; }
-    .auth-modal input:focus, .auth-modal select:focus { border-color: var(--accent); background: #13131f; }
+    .auth-modal input:focus, .auth-modal select:focus { border-color: #7c3aed; background: #13131f; }
     .auth-modal select option { background: #1a1a27; }
 
     .auth-modal .submit-btn {
       width: 100%; padding: 13px; margin-top: 14px;
-      background: var(--accent); border: none; border-radius: 9px;
+      background: #7c3aed; border: none; border-radius: 9px;
       color: #fff; font-family: 'Outfit'; font-weight: 700; font-size: 1rem;
       cursor: pointer; transition: all 0.25s;
       box-shadow: 0 0 20px rgba(124,58,237,0.3);
@@ -246,16 +235,16 @@
     .toast {
       position: fixed; top: 24px; right: 24px; z-index: 9999;
       padding: 14px 22px; border-radius: 10px;
-      background: var(--card); border: 1px solid var(--border);
-      color: var(--text); font-size: 0.9rem; font-weight: 600;
-      border-left: 4px solid var(--accent);
+      background: #1a1a27; border: 1px solid #2a2a3d;
+      color: #f0f0ff; font-size: 0.9rem; font-weight: 600;
+      border-left: 4px solid #7c3aed;
       box-shadow: 0 8px 24px rgba(0,0,0,0.5);
       opacity: 0; pointer-events: none;
       transform: translateY(-20px); transition: all 0.3s;
     }
     .toast.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-    .toast.success { border-left-color: var(--green); }
-    .toast.error { border-left-color: var(--red); }
+    .toast.success { border-left-color: #10b981; }
+    .toast.error { border-left-color: #ef4444; }
   </style>
 </head>
 <body>

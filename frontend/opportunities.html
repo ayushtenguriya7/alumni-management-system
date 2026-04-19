@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opportunities Board — AlumniPortal Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { font-family: 'Outfit', sans-serif; background: #0a0a0f; color: #f0f0ff; }
+
+    .navbar {
+      height: 64px; background: #111118; border-bottom: 1px solid #2a2a3d;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 32px; position: sticky; top: 0; z-index: 100;
+    }
+    .logo {
+      font-size: 1.3rem; font-weight: 800;
+      background: linear-gradient(135deg, #a78bfa, #818cf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .back-btn {
+      padding: 8px 18px; background: rgba(255,255,255,0.05); border: 1px solid #2a2a3d;
+      border-radius: 8px; color: #8888aa; font-family: 'Outfit'; font-weight: 600;
+      font-size: 0.88rem; cursor: pointer; transition: all 0.2s;
+    }
+    .back-btn:hover { border-color: #7c3aed; color: #f0f0ff; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 36px 24px; }
+    h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 22px; }
+
+    /* TABS */
+    .tabs { display: flex; gap: 10px; margin-bottom: 22px; }
+    .tab-btn {
+      padding: 9px 20px; background: rgba(255,255,255,0.04); border: 1px solid #2a2a3d;
+      border-radius: 8px; color: #8888aa; font-family: 'Outfit'; font-weight: 600;
+      font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+    }
+    .tab-btn.active { background: rgba(124,58,237,0.2); border-color: rgba(124,58,237,0.4); color: #a78bfa; }
+
+    /* FILTER BAR */
+    .search-bar {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      background: #1a1a27; border: 1px solid #2a2a3d;
+      padding: 18px; border-radius: 12px; margin-bottom: 28px;
+    }
+    .search-bar input, .search-bar select {
+      flex: 1; min-width: 140px; padding: 10px 13px;
+      background: #0f0f1a; border: 1px solid #2a2a3d; color: #f0f0ff;
+      border-radius: 8px; font-family: 'Outfit'; font-size: 0.88rem; outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-bar input::placeholder { color: #55556a; }
+    .search-bar input:focus, .search-bar select:focus { border-color: #7c3aed; }
+    .search-bar select option { background: #1a1a27; }
+    .search-bar button {
+      padding: 10px 26px; background: #7c3aed; color: #fff; border: none;
+      border-radius: 8px; font-family: 'Outfit'; font-weight: 700; cursor: pointer;
+      transition: all 0.25s; box-shadow: 0 0 14px rgba(124,58,237,0.3);
+    }
+    .search-bar button:hover { background: #6d28d9; box-shadow: 0 0 22px rgba(124,58,237,0.5); }
+
+    /* JOB GRID */
+    .job-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 22px; }
+
+    .job-card {
+      background: #1a1a27; border: 1px solid #2a2a3d; border-radius: 14px;
+      padding: 22px; display: flex; flex-direction: column; justify-content: space-between;
+      transition: all 0.25s;
+    }
+    .job-card:hover { border-color: rgba(124,58,237,0.35); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.5); }
+
+    .jc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+    .jc-title { font-size: 1.15rem; font-weight: 700; color: #f0f0ff; }
+    .jc-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
+    .jc-badge.internship { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.25); }
+    .jc-badge.job { background: rgba(124,58,237,0.15); color: #a78bfa; border: 1px solid rgba(124,58,237,0.25); }
+    .jc-detail-row { margin: 7px 0; font-size: 0.88rem; color: #8888aa; display: flex; align-items: center; gap: 7px; }
+    .jc-detail-row strong { color: #f0f0ff; min-width: 80px; }
+    .jc-footer { margin-top: 18px; padding-top: 14px; border-top: 1px solid #2a2a3d; display: flex; justify-content: space-between; align-items: center; }
+    .jc-time { font-size: 0.78rem; color: #8888aa; }
+    .jc-expired { color: #ef4444; font-weight: 700; font-size: 0.78rem; }
+    .btn-group { display: flex; gap: 8px; }
+    .btn { padding: 7px 14px; border-radius: 7px; font-weight: 700; font-size: 0.82rem; cursor: pointer; border: none; font-family: 'Outfit'; transition: all 0.2s; }
+    .btn-apply { background: #7c3aed; color: #fff; box-shadow: 0 0 12px rgba(124,58,237,0.3); }
+    .btn-apply:hover { background: #6d28d9; box-shadow: 0 0 20px rgba(124,58,237,0.5); }
+    .btn-danger { background: transparent; border: 1px solid rgba(239,68,68,0.4); color: #ef4444; }
+    .btn-danger:hover { background: rgba(239,68,68,0.1); }
+    .btn-warn { background: transparent; border: 1px solid rgba(245,158,11,0.4); color: #f59e0b; }
+    .btn-warn:hover { background: rgba(245,158,11,0.1); }
+    .btn-disabled { background: rgba(255,255,255,0.05); color: #8888aa; cursor: not-allowed; border: 1px solid #2a2a3d; }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">AlumniPortal Pro</div>
+    <button class="back-btn" onclick="goBack()">← Return to Dashboard</button>
+  </div>
+
+  <div class="container">
+    <h2>Opportunities Board 💼</h2>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('all')" id="tab-all">All Opportunities</button>
+      <button class="tab-btn" onclick="switchTab('posted')" id="tab-posted">Posted By Me</button>
+      <button class="tab-btn" onclick="switchTab('applied')" id="tab-applied">Applied By Me</button>
+    </div>
+
+    <div class="search-bar" id="filterPanel">
+      <input type="text" id="filterRole" placeholder="Job Role (e.g. Developer)">
+      <input type="text" id="filterLocation" placeholder="Location">
+      <input type="text" id="filterExperience" placeholder="Experience (e.g. 2 Years)">
+      <select id="filterType">
+        <option value="">Any Work Type</option>
+        <option value="remote">Remote</option>
+        <option value="hybrid">Hybrid</option>
+        <option value="onsite">Onsite</option>
+        <option value="online">Online</option>
+        <option value="offline">Offline</option>
+      </select>
+      <button onclick="fetchJobs()">Search</button>
+    </div>
+
+    <div class="job-grid" id="jobsContainer">Loading...</div>
+  </div>
+
+  <script>
+    const BASE_URL = "http://localhost:5000/api";
+    const userId = localStorage.getItem("userId");
+    let currentTab = 'all';
+
+    function goBack() {
+      const role = localStorage.getItem("role");
+      if (role === "admin") window.location.href = "admin/dashboard.html";
+      else if (role === "alumni") window.location.href = "alumni/dashboard.html";
+      else window.location.href = "student/dashboard.html";
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`tab-${tab}`).classList.add('active');
+      document.getElementById('filterPanel').style.display = tab === 'applied' ? 'none' : 'flex';
+      fetchJobs();
+    }
+
+    async function applyJob(postId, link) {
+      if (!window.confirm("Apply to this opportunity?")) return;
+      try {
+        await fetch(`${BASE_URL}/applications/create`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ studentId: userId, postId, status: 'Applied' })
+        });
+        if (link) window.open(link, '_blank');
+        else alert("No external link. Application logged internally.");
+        if (currentTab === 'applied') fetchJobs();
+      } catch (e) { console.error(e); alert("Failed to log application."); }
+    }
+
+    async function expireJob(postId) {
+      if (!confirm("Mark this as expired?")) return;
+      await fetch(`${BASE_URL}/posts/${postId}/expire`, { method: 'PUT' });
+      fetchJobs();
+    }
+
+    async function deleteJob(postId) {
+      if (!confirm("Delete this post permanently?")) return;
+      await fetch(`${BASE_URL}/posts/${postId}`, { method: 'DELETE' });
+      fetchJobs();
+    }
+
+    function timeAgo(dateString) {
+      const ms = Date.now() - new Date(dateString).getTime();
+      const hours = Math.floor(ms / (1000 * 60 * 60));
+      if (hours < 24) return hours <= 0 ? 'Just now' : `${hours}h ago`;
+      return `${Math.floor(hours / 24)}d ago`;
+    }
+
+    async function fetchJobs() {
+      const container = document.getElementById('jobsContainer');
+      container.innerHTML = "Fetching...";
+      try {
+        if (currentTab === 'applied') {
+          const res = await fetch(`${BASE_URL}/applications/${userId}`);
+          renderApplications(await res.json());
+          return;
+        }
+        const params = new URLSearchParams();
+        const role = document.getElementById("filterRole").value;
+        const loc = document.getElementById("filterLocation").value;
+        const exp = document.getElementById("filterExperience").value;
+        const type = document.getElementById("filterType").value;
+        if (role) params.append("role", role);
+        if (loc) params.append("location", loc);
+        if (exp) params.append("experience", exp);
+        if (type) params.append("type", type);
+        if (currentTab === 'posted') params.append("authorId", userId);
+        const res = await fetch(`${BASE_URL}/posts/search/filters?${params}`);
+        renderPosts(await res.json());
+      } catch (err) { console.error(err); container.innerHTML = "Failed to load."; }
+    }
+
+    function buildCardTop(post) {
+      const isIntern = post.postType === 'internship';
+      return `
+        <div class="jc-header">
+          <h3 class="jc-title">${post.title || "Untitled"}</h3>
+          <div class="jc-badge ${isIntern ? 'internship' : 'job'}">${isIntern ? 'Internship' : 'Job'}</div>
+        </div>
+        ${!isIntern && post.role ? `<div class="jc-detail-row"><strong>Role:</strong> ${post.role}</div>` : ''}
+        ${isIntern && post.stipend ? `<div class="jc-detail-row"><strong>Stipend:</strong> ${post.stipend}</div>` : ''}
+        <div class="jc-detail-row"><strong>Location:</strong> ${post.location || "Unspecified"} (${post.type || "N/A"})</div>
+        ${post.experience ? `<div class="jc-detail-row"><strong>Experience:</strong> ${post.experience}</div>` : ''}
+        <div class="jc-detail-row"><strong>Author:</strong> ${post.postedBy?.name || "Unknown"}</div>
+      `;
+    }
+
+    function renderPosts(posts) {
+      const container = document.getElementById('jobsContainer');
+      container.innerHTML = "";
+      if (posts.length === 0) { container.innerHTML = `<p style="color:#8888aa">No opportunities found.</p>`; return; }
+      posts.forEach(post => {
+        const isMine = post.postedBy?._id === userId || post.postedBy === userId;
+        const expiredHtml = post.isExpired
+          ? `<span class="jc-expired">EXPIRED</span>`
+          : `<span class="jc-time">Posted ${timeAgo(post.createdAt)}</span>`;
+        let actionBtns = post.isExpired
+          ? `<button class="btn btn-disabled" disabled>Closed</button>`
+          : `<button class="btn btn-apply" onclick="applyJob('${post._id}', '${post.link}')">Apply</button>`;
+        if (isMine) {
+          actionBtns += `
+            <button class="btn btn-warn" ${post.isExpired ? 'disabled style="opacity:0.4"' : ''} onclick="expireJob('${post._id}')">Expire</button>
+            <button class="btn btn-danger" onclick="deleteJob('${post._id}')">Delete</button>`;
+        }
+        container.innerHTML += `
+          <div class="job-card">
+            <div>${buildCardTop(post)}</div>
+            <div class="jc-footer">${expiredHtml}<div class="btn-group">${actionBtns}</div></div>
+          </div>`;
+      });
+    }
+
+    function renderApplications(apps) {
+      const container = document.getElementById('jobsContainer');
+      container.innerHTML = "";
+      if (apps.length === 0) { container.innerHTML = `<p style="color:#8888aa">You haven't applied to any opportunities yet.</p>`; return; }
+      apps.forEach(app => {
+        const post = app.postId;
+        if (!post) return;
+        container.innerHTML += `
+          <div class="job-card">
+            <div>
+              ${buildCardTop(post)}
+              <div class="jc-detail-row" style="color:#a78bfa;margin-top:10px;"><strong>Status:</strong> ${app.status}</div>
+            </div>
+            <div class="jc-footer">
+              <span class="jc-time">Applied ${new Date(app.createdAt).toLocaleDateString()}</span>
+              <button class="btn btn-apply" onclick="window.open('${post.link}', '_blank')">View</button>
+            </div>
+          </div>`;
+      });
+    }
+
+    fetchJobs();
+  </script>
+</body>
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>University Events | AlumniPortal Pro</title>
+  <meta name="description" content="Browse and register for university events, alumni meetups, seminars, and more.">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { font-family: 'Outfit', sans-serif; background: #0a0a0f; color: #f0f0ff; min-height: 100vh; }
+
+    .navbar {
+      background: #111118; border-bottom: 1px solid #2a2a3d;
+      height: 64px; display: flex; justify-content: space-between; align-items: center;
+      padding: 0 40px; position: sticky; top: 0; z-index: 200;
+    }
+    .logo { font-size: 1.3rem; font-weight: 800; background: linear-gradient(135deg, #a78bfa, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .back-btn {
+      padding: 8px 18px; background: rgba(255,255,255,0.05); color: #8888aa;
+      border: 1px solid #2a2a3d; border-radius: 8px; font-weight: 600; font-size: 0.88rem;
+      cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.2s;
+    }
+    .back-btn:hover { border-color: #7c3aed; color: #f0f0ff; }
+
+    /* HERO SLIDESHOW */
+    .hero-slideshow {
+      height: 400px; position: relative; overflow: hidden;
+      border-bottom: 1px solid #2a2a3d;
+    }
+    .hero-slideshow .slide {
+      position: absolute; inset: 0; opacity: 0; transition: opacity 1s ease-in-out;
+      background-size: cover; background-position: center;
+    }
+    .hero-slideshow .slide.active { opacity: 1; }
+    .slide-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, #0a0a0f 0%, rgba(10,10,15,0.5) 50%, rgba(10,10,15,0.8) 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 40px; pointer-events: none;
+    }
+    .slide-overlay h1 { font-size: 2.8rem; font-weight: 800; color: #fff; text-shadow: 0 4px 12px rgba(0,0,0,0.5); margin-bottom: 10px; }
+    .slide-overlay p { font-size: 1.1rem; color: #d1d5db; max-width: 600px; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+    .hero-stats {
+      display: flex; justify-content: center; gap: 40px; margin-top: 30px; pointer-events: auto;
+    }
+    .stat-box { text-align: center; }
+    .stat-box h3 { font-size: 2rem; font-weight: 800; color: #a78bfa; margin: 0; }
+    .stat-box p { font-size: 0.85rem; color: #cbd5e1; margin: 0; }
+
+    /* LAYOUT */
+    .container { max-width: 1300px; margin: 0 auto; padding: 40px 20px; }
+
+    /* FILTER BAR */
+    .filter-bar {
+      background: #1a1a27; border-radius: 14px; padding: 20px;
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 30px;
+      border: 1px solid #2a2a3d;
+    }
+    .filter-label { font-weight: 700; font-size: 0.9rem; color: #8888aa; margin-right: 5px; }
+    .filter-pill, .status-btn {
+      padding: 7px 16px; border-radius: 30px; border: 1px solid #2a2a3d;
+      background: transparent; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      font-family: 'Outfit'; transition: all 0.2s; color: #8888aa;
+    }
+    .filter-pill:hover, .status-btn:hover { border-color: rgba(124,58,237,0.5); color: #f0f0ff; }
+    .filter-pill.active { background: rgba(124,58,237,0.2); border-color: rgba(124,58,237,0.4); color: #a78bfa; }
+
+    .status-filter { margin-left: auto; display: flex; gap: 8px; }
+    .status-btn.active { background: #111118; color: #f0f0ff; border-color: #7c3aed; }
+
+    .results-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .results-count { font-size: 1rem; color: #8888aa; }
+    .results-count strong { color: #f0f0ff; }
+
+    /* EVENTS GRID */
+    .events-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+    .event-card {
+      background: #1a1a27; border-radius: 14px; overflow: hidden; border: 1px solid #2a2a3d;
+      transition: all 0.25s; cursor: pointer; display: flex; flex-direction: column;
+    }
+    .event-card:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0,0,0,0.5); border-color: rgba(124,58,237,0.35); }
+
+    .card-img { height: 160px; background-size: cover; background-position: center; position: relative; }
+    .card-img-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, #1a1a27 100%); }
+    .card-badge {
+      position: absolute; top: 12px; left: 12px; padding: 4px 12px; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    }
+    .badge-upcoming { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.25); }
+    .badge-expired { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+    .badge-today { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
+    .badge-tomorrow { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.25); }
+
+    .card-category {
+      position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.7);
+      color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;
+    }
+
+    .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+    .card-title { font-size: 1.05rem; font-weight: 700; color: #f0f0ff; margin-bottom: 8px; line-height: 1.3; }
+    .card-meta { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .card-meta-row { display: flex; align-items: center; gap: 7px; font-size: 0.82rem; color: #8888aa; }
+    .card-desc { font-size: 0.84rem; color: #8888aa; line-height: 1.6; margin-bottom: 18px; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid #2a2a3d; }
+    .card-seats { font-size: 0.78rem; font-weight: 600; color: #8888aa; }
+    .card-seats span { color: #10b981; font-weight: 700; }
+    .details-btn {
+      padding: 8px 18px; background: #7c3aed; color: white; border: none; border-radius: 8px;
+      font-size: 0.85rem; font-weight: 700; cursor: pointer; font-family: 'Outfit'; transition: all 0.2s;
+    }
+    .details-btn:hover { background: #6d28d9; box-shadow: 0 0 14px rgba(124,58,237,0.4); }
+    .details-btn.expired { background: rgba(255,255,255,0.05); color: #8888aa; border: 1px solid #2a2a3d; box-shadow: none; cursor: default; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000;
+      display: flex; justify-content: center; align-items: center; padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #1a1a27; border: 1px solid #2a2a3d; border-radius: 18px;
+      width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto;
+      transform: scale(0.95); transition: transform 0.3s; scrollbar-width: thin; scrollbar-color: #2a2a3d transparent;
+    }
+    .modal-overlay.active .modal { transform: scale(1); }
+    
+    .modal-img { height: 200px; background-size: cover; background-position: center; position: relative; border-radius: 18px 18px 0 0; }
+    .modal-img-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, #1a1a27 100%); }
+    .modal-close {
+      position: absolute; top: 14px; right: 14px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
+      color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .modal-close:hover { background: rgba(0,0,0,0.8); }
+    .modal-badge-overlay { position: absolute; bottom: 15px; left: 15px; display: flex; gap: 8px; }
+
+    .modal-body { padding: 28px; }
+    .modal-category { font-size: 0.8rem; font-weight: 700; color: #a78bfa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .modal-title { font-size: 1.5rem; font-weight: 800; color: #f0f0ff; margin-bottom: 18px; }
+
+    .modal-info-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 22px;
+      background: #111118; padding: 18px; border-radius: 12px; border: 1px solid #2a2a3d;
+    }
+    .modal-info-item label { display: block; font-size: 0.75rem; font-weight: 700; color: #8888aa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+    .modal-info-item p { font-size: 0.9rem; font-weight: 700; color: #f0f0ff; }
+
+    .modal-desc-label { font-weight: 700; color: #f0f0ff; margin-bottom: 8px; font-size: 0.95rem; }
+    .modal-desc { font-size: 0.9rem; color: #8888aa; line-height: 1.7; margin-bottom: 24px; }
+
+    .modal-actions { display: flex; gap: 12px; }
+    .register-btn {
+      flex: 1; padding: 12px; background: #7c3aed; color: white; border: none; border-radius: 10px;
+      font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Outfit';
+    }
+    .register-btn:hover { background: #6d28d9; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(124,58,237,0.3); }
+    .register-btn.expired-btn { background: rgba(255,255,255,0.05); color: #8888aa; border: 1px solid #2a2a3d; box-shadow: none; cursor: default; }
+    .share-btn {
+      padding: 12px 20px; background: transparent; border: 1px solid #2a2a3d; color: #8888aa;
+      border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Outfit';
+    }
+    .share-btn:hover { background: rgba(255,255,255,0.05); color: #f0f0ff; }
+
+    .empty-state { text-align: center; padding: 80px 20px; color: #8888aa; grid-column: 1/-1; }
+    .empty-state h3 { font-size: 1.3rem; margin-top: 15px; color: #f0f0ff; }
+
+    .scroll-top {
+      position: fixed; bottom: 30px; right: 30px; width: 44px; height: 44px;
+      background: #7c3aed; color: white; border: none; border-radius: 50%;
+      font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 12px rgba(124,58,237,0.4);
+      display: none; align-items: center; justify-content: center; transition: background 0.2s; z-index: 100;
+    }
+    .scroll-top.visible { display: flex; }
+    .scroll-top:hover { background: #6d28d9; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">AlumniPortal Pro</div>
+    <button class="back-btn" onclick="goBack()">← Return to Dashboard</button>
+  </nav>
+
+  <!-- HERO SLIDESHOW -->
+  <div class="hero-slideshow">
+    <div class="slide active" style="background-image: url('assets/events_image/Screenshot 2026-04-19 151139.png');"></div>
+    <div class="slide" style="background-image: url('assets/events_image/Screenshot 2026-04-19 151227.png');"></div>
+    <div class="slide" style="background-image: url('assets/events_image/Screenshot 2026-04-19 151238.png');"></div>
+    <div class="slide" style="background-image: url('assets/events_image/Screenshot 2026-04-19 151252.png');"></div>
+    
+    <div class="slide-overlay">
+      <h1>University Events Hub</h1>
+      <p>Stay connected with campus life — explore, register, and attend events built for you</p>
+      <div class="hero-stats">
+        <div class="stat-box"><h3 id="upcomingCount">--</h3><p>Upcoming Events</p></div>
+        <div class="stat-box"><h3 id="totalCount">--</h3><p>Total Events</p></div>
+        <div class="stat-box"><h3 id="catCount">--</h3><p>Categories</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="filter-bar">
+      <span class="filter-label">Category:</span>
+      <button class="filter-pill active" onclick="setCategory(this, 'all')">All</button>
+      <button class="filter-pill" onclick="setCategory(this, 'Technical')">💻 Technical</button>
+      <button class="filter-pill" onclick="setCategory(this, 'Cultural')">🎭 Cultural</button>
+      <button class="filter-pill" onclick="setCategory(this, 'Sports')">⚽ Sports</button>
+      <button class="filter-pill" onclick="setCategory(this, 'Career')">💼 Career</button>
+      <button class="filter-pill" onclick="setCategory(this, 'Alumni')">🎓 Alumni</button>
+      <button class="filter-pill" onclick="setCategory(this, 'Workshop')">🔧 Workshop</button>
+      <button class="filter-pill" onclick="setCategory(this, 'Startup')">🚀 Startup</button>
+      <button class="filter-pill" onclick="setCategory(this, 'Research')">🔬 Research</button>
+      <div class="status-filter">
+        <button class="status-btn active" onclick="setStatus(this, 'all')">All</button>
+        <button class="status-btn" onclick="setStatus(this, 'upcoming')">Upcoming</button>
+        <button class="status-btn" onclick="setStatus(this, 'expired')">Past</button>
+      </div>
+    </div>
+
+    <div class="results-row">
+      <p class="results-count">Showing <strong id="visibleCount">0</strong> events</p>
+    </div>
+
+    <div class="events-grid" id="eventsGrid"></div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="eventModal" onclick="closeModalOnOverlay(event)">
+    <div class="modal" id="modalContent">
+      <div class="modal-img" id="modalImg">
+        <div class="modal-img-overlay"></div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div class="modal-badge-overlay">
+          <span class="card-badge" id="modalStatus"></span>
+          <span class="card-badge" style="background:rgba(255,255,255,0.15);color:white;" id="modalCatBadge"></span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-category" id="modalCat"></div>
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-info-grid">
+          <div class="modal-info-item"><label>📅 Date</label><p id="modalDate"></p></div>
+          <div class="modal-info-item"><label>🕐 Time</label><p id="modalTime"></p></div>
+          <div class="modal-info-item"><label>📍 Location</label><p id="modalLoc"></p></div>
+          <div class="modal-info-item"><label>👥 Seats Available</label><p id="modalSeats"></p></div>
+          <div class="modal-info-item"><label>🎟 Registration</label><p id="modalReg"></p></div>
+          <div class="modal-info-item"><label>🏷 Fee</label><p id="modalFee"></p></div>
+        </div>
+        <div class="modal-desc-label">About this Event</div>
+        <div class="modal-desc" id="modalDesc"></div>
+        <div class="modal-actions">
+          <button class="register-btn" id="modalRegBtn" onclick="registerEvent()">Register Now →</button>
+          <button class="share-btn" onclick="shareEvent()">Share ↗</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+  <script>
+    function goBack() {
+      const role = localStorage.getItem("role");
+      if (role === "admin") window.location.href = "admin/dashboard.html";
+      else if (role === "alumni") window.location.href = "alumni/dashboard.html";
+      else window.location.href = "student/dashboard.html";
+    }
+
+    const today = new Date();
+    function daysFromToday(d) {
+      const dt = new Date(today); dt.setDate(dt.getDate() + d); return dt.toISOString().split('T')[0];
+    }
+
+    const EVENTS = [
+      { id:1, title:"National Level Hackathon 2026", category:"Technical", date: daysFromToday(5), time:"9:00 AM – 9:00 PM", location:"Main Auditorium, LPU", seats:200, fee:"Free", reg:"Open", img:"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=700&q=70", desc:"Join teams from across the country in a 12-hour coding challenge. Build innovative solutions for smart cities, healthcare, and sustainability. Best teams win scholarships and goodies worth ₹3 Lakh." },
+      { id:2, title:"Alumni Annual Reunion 2026", category:"Alumni", date: daysFromToday(12), time:"6:00 PM – 10:00 PM", location:"Convention Hall, Block 32", seats:500, fee:"₹500", reg:"Open", img:"https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=700&q=70", desc:"An evening of nostalgia, networking, and celebration with batchmates and faculty. Enjoy cultural performances, gala dinner, and reconnect with your roots at LPU." },
+      { id:3, title:"TechTalks: AI & Machine Learning", category:"Technical", date: daysFromToday(3), time:"11:00 AM – 1:00 PM", location:"Seminar Hall A, CSE Block", seats:150, fee:"Free", reg:"Open", img:"https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=700&q=70", desc:"Industry experts from Google and Microsoft will share insights on AI/ML trends, career pathways, and live demos of cutting-edge research. Q&A session included." },
+      { id:4, title:"Cultural Fiesta – Rangmanch 2026", category:"Cultural", date: daysFromToday(20), time:"4:00 PM – 9:00 PM", location:"Open Air Theatre", seats:1000, fee:"Free", reg:"Open", img:"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=700&q=70", desc:"Celebrate the vibrant diversity of cultures through dance, music, drama, and art exhibitions. Representing 30+ states and 10+ countries with over 100 performances over 3 days." },
+      { id:5, title:"Startup Pitch Battle 2026", category:"Startup", date: daysFromToday(8), time:"10:00 AM – 5:00 PM", location:"Innovation Hub, Block 80", seats:300, fee:"Free", reg:"Open", img:"https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=700&q=70", desc:"Present your startup idea to a panel of 10 angel investors. Top 3 startups win seed funding up to ₹10 Lakh. Open to all students and alumni with a valid business plan." },
+      { id:6, title:"Annual Sports Meet – Sprint 2026", category:"Sports", date: daysFromToday(15), time:"8:00 AM – 6:00 PM", location:"University Sports Complex", seats:800, fee:"₹100", reg:"Open", img:"https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=700&q=70", desc:"Participate in 20+ sports disciplines including Athletics, Basketball, Swimming, Chess, and more. Win medals and trophies representing your department." },
+      { id:7, title:"Career Fair – Recruit LPU", category:"Career", date: daysFromToday(25), time:"9:00 AM – 5:00 PM", location:"Multipurpose Hall, Block 34", seats:2000, fee:"Free", reg:"Open", img:"https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=700&q=70", desc:"Meet 200+ top companies including Infosys, TCS, Wipro, Amazon, and Google. Bring your updated resume and get placed on the spot. On-site HR sessions and mock interviews." },
+      { id:8, title:"Research Symposium – InnoVate", category:"Research", date: daysFromToday(10), time:"10:00 AM – 4:00 PM", location:"Research Block, Floor 3", seats:100, fee:"Free", reg:"Open", img:"https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=700&q=70", desc:"Present your research paper and poster project to a distinguished panel. Top papers get published in university journal and 3 international journals." },
+      { id:9, title:"Web Development Bootcamp", category:"Workshop", date: daysFromToday(2), time:"9:00 AM – 5:00 PM", location:"Computer Lab 2, CSE Block", seats:60, fee:"₹200", reg:"Open", img:"https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=700&q=70", desc:"2-day intensive bootcamp on React, Node.js, and MongoDB. Build a full-stack project from scratch. Get a completion certificate and course kit worth ₹1,500." },
+      { id:10, title:"Mental Health & Wellness Summit", category:"Workshop", date: daysFromToday(18), time:"2:00 PM – 5:00 PM", location:"Student Activity Center", seats:250, fee:"Free", reg:"Open", img:"https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=700&q=70", desc:"Join licensed counselors and mindfulness coaches for sessions on stress management, anxiety awareness, and building resilience. Safe space for all participants." }
+    ];
+
+    let activeCategory = 'all';
+    let activeStatus = 'all';
+    let openEventId = null;
+
+    function getStatus(event) {
+      const evDate = new Date(event.date);
+      const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+      const diff = Math.floor((evDate - todayDate) / 86400000);
+      if (diff < 0) return 'expired';
+      if (diff === 0) return 'today';
+      if (diff === 1) return 'tomorrow';
+      return 'upcoming';
+    }
+    function badgeLabel(s) {
+      return { expired:'Past Event', today:'Today!', tomorrow:'Tomorrow', upcoming:'Upcoming' }[s];
+    }
+    function badgeClass(s) {
+      return { expired:'badge-expired', today:'badge-today', tomorrow:'badge-tomorrow', upcoming:'badge-upcoming' }[s];
+    }
+    function formatDate(d) {
+      return new Date(d).toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'long', year:'numeric' });
+    }
+
+    function renderEvents() {
+      const grid = document.getElementById('eventsGrid');
+      let filtered = EVENTS.filter(e => {
+        const catMatch = activeCategory === 'all' || e.category === activeCategory;
+        const statusVal = getStatus(e);
+        const statusMatch = activeStatus === 'all' || (activeStatus === 'upcoming' && statusVal !== 'expired') || (activeStatus === 'expired' && statusVal === 'expired');
+        return catMatch && statusMatch;
+      });
+
+      document.getElementById('visibleCount').innerText = filtered.length;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state">
+          <svg width="60" height="60" fill="none" viewBox="0 0 24 24" stroke="#8888aa"><circle cx="11" cy="11" r="8" stroke-width="1.5"/><path d="m21 21-4.35-4.35" stroke-width="1.5"/></svg>
+          <h3>No events found</h3><p>Try a different category or status filter.</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(e => {
+        const s = getStatus(e);
+        const isExpired = s === 'expired';
+        return `
+          <div class="event-card" onclick="openModal(${e.id})">
+            <div class="card-img" style="background-image:url('${e.img}')">
+              <div class="card-img-overlay"></div>
+              <div class="card-badge ${badgeClass(s)}">${badgeLabel(s)}</div>
+              <div class="card-category">${e.category}</div>
+            </div>
+            <div class="card-body">
+              <div class="card-title">${e.title}</div>
+              <div class="card-meta">
+                <div class="card-meta-row">📅 ${formatDate(e.date)} • ${e.time}</div>
+                <div class="card-meta-row">📍 ${e.location}</div>
+              </div>
+              <div class="card-desc">${e.desc}</div>
+              <div class="card-footer">
+                <div class="card-seats">Seats: <span>${isExpired ? '0' : e.seats}</span></div>
+                <button class="details-btn ${isExpired ? 'expired' : ''}">${isExpired ? 'View Details' : 'View & Register'}</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function openModal(id) {
+      const e = EVENTS.find(x => x.id === id);
+      if (!e) return;
+      openEventId = id;
+      const s = getStatus(e);
+      const isExpired = s === 'expired';
+
+      document.getElementById('modalImg').style.backgroundImage = `url('${e.img}')`;
+      document.getElementById('modalStatus').className = `card-badge ${badgeClass(s)}`;
+      document.getElementById('modalStatus').innerText = badgeLabel(s);
+      document.getElementById('modalCatBadge').innerText = e.category;
+      document.getElementById('modalCat').innerText = e.category;
+      document.getElementById('modalTitle').innerText = e.title;
+      document.getElementById('modalDate').innerText = formatDate(e.date);
+      document.getElementById('modalTime').innerText = e.time;
+      document.getElementById('modalLoc').innerText = e.location;
+      document.getElementById('modalSeats').innerText = isExpired ? 'Closed' : `${e.seats} seats`;
+      document.getElementById('modalReg').innerText = e.reg;
+      document.getElementById('modalFee').innerText = e.fee;
+      document.getElementById('modalDesc').innerText = e.desc;
+
+      const btn = document.getElementById('modalRegBtn');
+      if (isExpired) {
+        btn.innerText = 'Registrations Closed';
+        btn.className = 'register-btn expired-btn';
+        btn.onclick = null;
+      } else {
+        btn.innerText = 'Register Now →';
+        btn.className = 'register-btn';
+        btn.onclick = registerEvent;
+      }
+
+      document.getElementById('eventModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('eventModal').classList.remove('active');
+      document.body.style.overflow = '';
+      openEventId = null;
+    }
+
+    function closeModalOnOverlay(e) {
+      if (e.target === document.getElementById('eventModal')) closeModal();
+    }
+
+    function registerEvent() {
+      const e = EVENTS.find(x => x.id === openEventId);
+      if (!e) return;
+      const msg = e.fee === 'Free' ? 'You have registered for free!' : `Proceed to payment of ${e.fee} to complete registration.`;
+      alert(`✅ Successfully registered for:\n"${e.title}"\n\n${msg}`);
+    }
+
+    function shareEvent() {
+      const e = EVENTS.find(x => x.id === openEventId);
+      if (!e) return;
+      alert(`Share this event:\n"${e.title}" — ${formatDate(e.date)}\n${e.location}`);
+    }
+
+    function setCategory(btn, cat) {
+      activeCategory = cat;
+      document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderEvents();
+    }
+
+    function setStatus(btn, status) {
+      activeStatus = status;
+      document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderEvents();
+    }
+
+    function updateStats() {
+      const upcoming = EVENTS.filter(e => getStatus(e) !== 'expired').length;
+      const cats = new Set(EVENTS.map(e => e.category)).size;
+      document.getElementById('upcomingCount').innerText = upcoming;
+      document.getElementById('totalCount').innerText = EVENTS.length;
+      document.getElementById('catCount').innerText = cats;
+    }
+
+    window.addEventListener('scroll', () => {
+      document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // Hero Slideshow
+    const slides = document.querySelectorAll('.hero-slideshow .slide');
+    let curSlide = 0;
+    if (slides.length > 0) {
+      setInterval(() => {
+        slides[curSlide].classList.remove('active');
+        curSlide = (curSlide + 1) % slides.length;
+        slides[curSlide].classList.add('active');
+      }, 4000);
+    }
+
+    updateStats();
+    renderEvents();
+  </script>
+</body>
+</html>

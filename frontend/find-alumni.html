@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Alumni — AlumniPortal Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { font-family: 'Outfit', sans-serif; background: #0a0a0f; color: #f0f0ff; }
+
+    .navbar {
+      height: 64px; background: #111118; border-bottom: 1px solid #2a2a3d;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 32px; position: sticky; top: 0; z-index: 100;
+    }
+    .logo {
+      font-size: 1.3rem; font-weight: 800;
+      background: linear-gradient(135deg, #a78bfa, #818cf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .back-btn {
+      padding: 8px 18px; background: rgba(255,255,255,0.05); border: 1px solid #2a2a3d;
+      border-radius: 8px; color: #8888aa; font-family: 'Outfit'; font-weight: 600;
+      font-size: 0.88rem; cursor: pointer; transition: all 0.2s;
+    }
+    .back-btn:hover { border-color: #7c3aed; color: #f0f0ff; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 36px 24px; }
+    h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 22px; }
+
+    .search-bar {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      background: #1a1a27; border: 1px solid #2a2a3d;
+      padding: 18px; border-radius: 12px; margin-bottom: 30px;
+    }
+    .search-bar input {
+      flex: 1; min-width: 150px; padding: 10px 13px;
+      background: #0f0f1a; border: 1px solid #2a2a3d; color: #f0f0ff;
+      border-radius: 8px; font-family: 'Outfit'; font-size: 0.88rem; outline: none; transition: border-color 0.2s;
+    }
+    .search-bar input::placeholder { color: #55556a; }
+    .search-bar input:focus { border-color: #7c3aed; }
+    .search-bar button {
+      padding: 10px 26px; background: #7c3aed; color: #fff; border: none;
+      border-radius: 8px; font-family: 'Outfit'; font-weight: 700; cursor: pointer; transition: all 0.25s;
+      box-shadow: 0 0 14px rgba(124,58,237,0.3);
+    }
+    .search-bar button:hover { background: #6d28d9; box-shadow: 0 0 22px rgba(124,58,237,0.5); }
+
+    .alumni-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 22px; }
+
+    .alumni-card {
+      background: #1a1a27; border: 1px solid #2a2a3d; border-radius: 14px;
+      overflow: hidden; transition: all 0.25s;
+    }
+    .alumni-card:hover { border-color: rgba(124,58,237,0.35); transform: translateY(-4px); box-shadow: 0 14px 36px rgba(0,0,0,0.5); }
+
+    .ac-top { height: 90px; position: relative; }
+    .ac-avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      border: 3px solid #1a1a27; object-fit: cover;
+      position: absolute; bottom: -36px; left: 50%; transform: translateX(-50%);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4); background: #1a1a27;
+    }
+    .fallback-avatar { display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700; color: rgba(255,255,255,0.9); }
+
+    .ac-bottom { padding: 44px 18px 22px; text-align: center; }
+    .ac-bottom h3 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #f0f0ff; }
+    .ac-bottom p { margin: 7px 0 0; font-size: 0.88rem; color: #8888aa; }
+    .ac-badge {
+      display: inline-block; background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3);
+      color: #a78bfa; padding: 3px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; margin-top: 9px;
+    }
+    .ac-btn {
+      display: block; margin-top: 16px; width: 100%; padding: 11px;
+      background: rgba(124,58,237,0.12); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 8px; font-weight: 700; font-size: 0.88rem; text-decoration: none;
+      transition: all 0.2s; text-align: center;
+    }
+    .ac-btn:hover { background: rgba(124,58,237,0.25); border-color: rgba(124,58,237,0.5); }
+
+    @media (max-width: 768px) { .search-bar { flex-direction: column; } }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">AlumniPortal Pro</div>
+    <button class="back-btn" onclick="goBack()">← Return to Dashboard</button>
+  </div>
+
+  <div class="container">
+    <h2>Find Alumni in Your Network 🔍</h2>
+
+    <div class="search-bar">
+      <input type="number" id="filterYear" placeholder="Graduation Year (e.g. 2024)">
+      <input type="text" id="filterCourse" placeholder="Department / Course">
+      <input type="text" id="filterEmail" placeholder="Email Address">
+      <button onclick="fetchAlumni()">Apply Filters</button>
+    </div>
+
+    <div class="alumni-grid" id="alumniContainer"></div>
+  </div>
+
+  <script>
+    const BASE_URL = "http://localhost:5000/api/users";
+    const gradients = [
+      "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
+      "linear-gradient(135deg, #059669 0%, #0891b2 100%)",
+      "linear-gradient(135deg, #b45309 0%, #d97706 100%)",
+      "linear-gradient(135deg, #be185d 0%, #7c3aed 100%)",
+      "linear-gradient(135deg, #4f46e5 0%, #0891b2 100%)"
+    ];
+
+    function goBack() {
+      const role = localStorage.getItem("role");
+      if (role === "admin") window.location.href = "admin/dashboard.html";
+      else if (role === "alumni") window.location.href = "alumni/dashboard.html";
+      else window.location.href = "student/dashboard.html";
+    }
+
+    async function fetchAlumni() {
+      const year = document.getElementById("filterYear").value;
+      const course = document.getElementById("filterCourse").value;
+      const email = document.getElementById("filterEmail").value;
+      const params = new URLSearchParams();
+      if (year) params.append("year", year);
+      if (course) params.append("course", course);
+      if (email) params.append("email", email);
+
+      try {
+        const res = await fetch(`${BASE_URL}/alumni/search?${params}`);
+        const alumni = await res.json();
+        const container = document.getElementById("alumniContainer");
+        container.innerHTML = "";
+
+        if (alumni.error) { container.innerHTML = `<p style="color:#ef4444">Error: ${alumni.error}</p>`; return; }
+        if (alumni.length === 0) { container.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:#8888aa">No alumni matched your search. Try adjusting your filters.</p>`; return; }
+
+        alumni.forEach((user, idx) => {
+          const initial = user.name ? user.name.charAt(0).toUpperCase() : "?";
+          const bg = gradients[idx % gradients.length];
+          const hasPic = !!user.profilePic;
+          const avatarHTML = hasPic
+            ? `<img src="${user.profilePic}" class="ac-avatar" alt="${user.name}">`
+            : `<div class="ac-avatar fallback-avatar" style="background:${bg}">${initial}</div>`;
+
+          container.innerHTML += `
+            <div class="alumni-card">
+              <div class="ac-top" style="background:${bg}">${avatarHTML}</div>
+              <div class="ac-bottom">
+                <h3>${user.name || "Unknown"}</h3>
+                <div class="ac-badge">Class of ${user.graduationYear || "N/A"}</div>
+                <p><strong>Dept:</strong> ${user.course || "General"}</p>
+                <p><strong>At:</strong> ${user.jobPost || "Looking"} @ ${user.company || "N/A"}</p>
+                <a class="ac-btn" href="mailto:${user.email}">Contact Alumni</a>
+              </div>
+            </div>`;
+        });
+      } catch (err) {
+        console.error(err);
+        document.getElementById("alumniContainer").innerHTML = `<p style="color:#8888aa">Failed to connect to backend.</p>`;
+      }
+    }
+
+    fetchAlumni();
+  </script>
+</body>
+</html>
