@@ -344,8 +344,8 @@
 
     <!-- LOGIN FORM -->
     <form id="loginForm" onsubmit="event.preventDefault(); login();">
-      <input id="loginId" placeholder="College ID / Email">
-      <input id="loginPass" type="password" placeholder="Password">
+      <input id="loginId" placeholder="College ID / Email" required>
+      <input id="loginPass" type="password" placeholder="Password" required>
       <button type="submit" class="submit-btn">Access Portal</button>
     </form>
 
@@ -356,11 +356,11 @@
         <button type="button" id="roleAlumniTab" onclick="setRole('alumni')">Alumni</button>
       </div>
       <input type="hidden" id="signupRole" value="student">
-      <input id="name" placeholder="Full Name">
-      <input id="email" placeholder="Email">
+      <input id="name" placeholder="Full Name" required>
+      <input id="email" type="email" placeholder="Email" required>
       <input id="collegeId" placeholder="College ID">
       <input id="year" type="number" placeholder="Graduation Year (e.g. 2024)" class="hidden">
-      <input id="password" type="password" placeholder="Password">
+      <input id="password" type="password" placeholder="Password" minlength="6" required>
       <button type="submit" class="submit-btn">Create Account</button>
     </form>
   </div>
@@ -461,21 +461,21 @@
     const year = document.getElementById("year").value.trim();
 
     // JavaScript Validation
-    if (!name) return alert("username is empty");
+    if (!name) return showToast("username is empty", "error");
     
-    if (!email) return alert("email is empty");
+    if (!email) return showToast("email is empty", "error");
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return alert("invalid email format");
+    if (!emailRegex.test(email)) return showToast("invalid email format", "error");
     
-    if (role === "student" && !collegeId) return alert("college id is empty");
+    if (role === "student" && !collegeId) return showToast("college id is empty", "error");
     
-    if (role === "alumni" && !year) return alert("graduation year is empty");
+    if (role === "alumni" && !year) return showToast("graduation year is empty", "error");
     if (role === "alumni" && (isNaN(year) || year < 1950 || year > 2030)) {
-      return alert("invalid graduation year");
+      return showToast("invalid graduation year", "error");
     }
 
-    if (!password) return alert("password is empty");
-    if (password.length < 6) return alert("minlength of password is 6");
+    if (!password) return showToast("password is empty", "error");
+    if (password.length < 6) return showToast("minlength of password is 6", "error");
 
     const data = { name, email, password, role };
     if (role === "student") data.collegeId = collegeId;
@@ -511,8 +511,8 @@
     const password = document.getElementById("loginPass").value;
 
     // JavaScript Validation
-    if (!loginId) return alert("username is empty");
-    if (!password) return alert("password is empty");
+    if (!loginId) return showToast("username is empty", "error");
+    if (!password) return showToast("password is empty", "error");
 
     const data = { loginId, password };
     try {
