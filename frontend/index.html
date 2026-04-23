@@ -344,8 +344,8 @@
 
     <!-- LOGIN FORM -->
     <form id="loginForm" onsubmit="event.preventDefault(); login();">
-      <input id="loginId" placeholder="College ID / Email" required>
-      <input id="loginPass" type="password" placeholder="Password" required minlength="6">
+      <input id="loginId" placeholder="College ID / Email">
+      <input id="loginPass" type="password" placeholder="Password">
       <button type="submit" class="submit-btn">Access Portal</button>
     </form>
 
@@ -356,11 +356,11 @@
         <button type="button" id="roleAlumniTab" onclick="setRole('alumni')">Alumni</button>
       </div>
       <input type="hidden" id="signupRole" value="student">
-      <input id="name" placeholder="Full Name" required minlength="2">
-      <input id="email" type="email" placeholder="Email" required>
-      <input id="collegeId" placeholder="College ID" required>
-      <input id="year" type="number" placeholder="Graduation Year (e.g. 2024)" class="hidden" min="1950" max="2030">
-      <input id="password" type="password" placeholder="Password" required minlength="6">
+      <input id="name" placeholder="Full Name">
+      <input id="email" placeholder="Email">
+      <input id="collegeId" placeholder="College ID">
+      <input id="year" type="number" placeholder="Graduation Year (e.g. 2024)" class="hidden">
+      <input id="password" type="password" placeholder="Password">
       <button type="submit" class="submit-btn">Create Account</button>
     </form>
   </div>
@@ -447,28 +447,39 @@
     const role = document.getElementById("signupRole").value;
     const isStudent = role === "student";
     
-    const collegeIdInput = document.getElementById("collegeId");
-    collegeIdInput.classList.toggle("hidden", !isStudent);
-    if (isStudent) collegeIdInput.setAttribute("required", "true");
-    else collegeIdInput.removeAttribute("required");
-
-    const yearInput = document.getElementById("year");
-    yearInput.classList.toggle("hidden", isStudent);
-    if (!isStudent) yearInput.setAttribute("required", "true");
-    else yearInput.removeAttribute("required");
+    document.getElementById("collegeId").classList.toggle("hidden", !isStudent);
+    document.getElementById("year").classList.toggle("hidden", isStudent);
   }
 
   /* ── SIGNUP ── */
   window.signup = async () => {
     const role = document.getElementById("signupRole").value;
-    const data = {
-      name: document.getElementById("name").value,
-      email: document.getElementById("email").value,
-      password: document.getElementById("password").value,
-      role
-    };
-    if (role === "student") data.collegeId = document.getElementById("collegeId").value;
-    else data.graduationYear = Number(document.getElementById("year").value);
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const collegeId = document.getElementById("collegeId").value.trim();
+    const year = document.getElementById("year").value.trim();
+
+    // JavaScript Validation
+    if (!name) return alert("username is empty");
+    
+    if (!email) return alert("email is empty");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return alert("invalid email format");
+    
+    if (role === "student" && !collegeId) return alert("college id is empty");
+    
+    if (role === "alumni" && !year) return alert("graduation year is empty");
+    if (role === "alumni" && (isNaN(year) || year < 1950 || year > 2030)) {
+      return alert("invalid graduation year");
+    }
+
+    if (!password) return alert("password is empty");
+    if (password.length < 6) return alert("minlength of password is 6");
+
+    const data = { name, email, password, role };
+    if (role === "student") data.collegeId = collegeId;
+    else data.graduationYear = Number(year);
 
     try {
       const res = await fetch(`${BASE_URL}/register`, {
@@ -496,10 +507,14 @@
 
   /* ── LOGIN ── */
   window.login = async () => {
-    const data = {
-      loginId: document.getElementById("loginId").value,
-      password: document.getElementById("loginPass").value
-    };
+    const loginId = document.getElementById("loginId").value.trim();
+    const password = document.getElementById("loginPass").value;
+
+    // JavaScript Validation
+    if (!loginId) return alert("username is empty");
+    if (!password) return alert("password is empty");
+
+    const data = { loginId, password };
     try {
       const res = await fetch(`${BASE_URL}/login`, {
         method: "POST",
