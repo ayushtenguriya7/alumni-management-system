@@ -343,26 +343,26 @@
     </div>
 
     <!-- LOGIN FORM -->
-    <div id="loginForm">
-      <input id="loginId" placeholder="College ID / Email">
-      <input id="loginPass" type="password" placeholder="Password">
-      <button class="submit-btn" onclick="login()">Access Portal</button>
-    </div>
+    <form id="loginForm" onsubmit="event.preventDefault(); login();">
+      <input id="loginId" placeholder="College ID / Email" required>
+      <input id="loginPass" type="password" placeholder="Password" required minlength="6">
+      <button type="submit" class="submit-btn">Access Portal</button>
+    </form>
 
     <!-- SIGNUP FORM -->
-    <div id="signupForm" class="hidden">
+    <form id="signupForm" class="hidden" onsubmit="event.preventDefault(); signup();">
       <div class="role-tabs">
-        <button id="roleStudentTab" class="active" onclick="setRole('student')">Student</button>
-        <button id="roleAlumniTab" onclick="setRole('alumni')">Alumni</button>
+        <button type="button" id="roleStudentTab" class="active" onclick="setRole('student')">Student</button>
+        <button type="button" id="roleAlumniTab" onclick="setRole('alumni')">Alumni</button>
       </div>
       <input type="hidden" id="signupRole" value="student">
-      <input id="name" placeholder="Full Name">
-      <input id="email" placeholder="Email">
-      <input id="collegeId" placeholder="College ID">
-      <input id="year" type="number" placeholder="Graduation Year (e.g. 2024)" class="hidden">
-      <input id="password" type="password" placeholder="Password">
-      <button class="submit-btn" onclick="signup()">Create Account</button>
-    </div>
+      <input id="name" placeholder="Full Name" required minlength="2">
+      <input id="email" type="email" placeholder="Email" required>
+      <input id="collegeId" placeholder="College ID" required>
+      <input id="year" type="number" placeholder="Graduation Year (e.g. 2024)" class="hidden" min="1950" max="2030">
+      <input id="password" type="password" placeholder="Password" required minlength="6">
+      <button type="submit" class="submit-btn">Create Account</button>
+    </form>
   </div>
 </div>
 
@@ -445,8 +445,17 @@
 
   function toggleSignupFields() {
     const role = document.getElementById("signupRole").value;
-    document.getElementById("collegeId").classList.toggle("hidden", role !== "student");
-    document.getElementById("year").classList.toggle("hidden", role !== "alumni");
+    const isStudent = role === "student";
+    
+    const collegeIdInput = document.getElementById("collegeId");
+    collegeIdInput.classList.toggle("hidden", !isStudent);
+    if (isStudent) collegeIdInput.setAttribute("required", "true");
+    else collegeIdInput.removeAttribute("required");
+
+    const yearInput = document.getElementById("year");
+    yearInput.classList.toggle("hidden", isStudent);
+    if (!isStudent) yearInput.setAttribute("required", "true");
+    else yearInput.removeAttribute("required");
   }
 
   /* ── SIGNUP ── */
