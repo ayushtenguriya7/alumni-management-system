@@ -80,6 +80,7 @@
       transition: all 0.2s; text-align: center;
     }
     .ac-btn:hover { background: rgba(124,58,237,0.25); border-color: rgba(124,58,237,0.5); }
+    button.ac-btn { cursor: pointer; font-family: 'Outfit', sans-serif; }
 
     @media (max-width: 768px) { .search-bar { flex-direction: column; } }
   </style>
@@ -88,7 +89,7 @@
 
   <div class="navbar">
     <div class="logo">AlumniPortal Pro</div>
-    <button class="back-btn" onclick="goBack()">← Return to Dashboard</button>
+    <button class="back-btn" id="backBtn">← Return to Dashboard</button>
   </div>
 
   <div class="container">
@@ -98,7 +99,7 @@
       <input type="number" id="filterYear" placeholder="Graduation Year (e.g. 2024)">
       <input type="text" id="filterCourse" placeholder="Department / Course">
       <input type="text" id="filterEmail" placeholder="Email Address">
-      <button onclick="fetchAlumni()">Apply Filters</button>
+      <button id="applyFiltersBtn">Apply Filters</button>
     </div>
 
     <div class="alumni-grid" id="alumniContainer"></div>
@@ -123,6 +124,18 @@
       else if (role === "alumni") window.location.href = "alumni/dashboard.html";
       else window.location.href = "student/dashboard.html";
     }
+
+    document.getElementById("backBtn").addEventListener("click", goBack);
+    document.getElementById("applyFiltersBtn").addEventListener("click", fetchAlumni);
+
+    document.getElementById("alumniContainer").addEventListener("click", (e) => {
+      if (e.target.classList.contains("ac-btn")) {
+        const email = e.target.getAttribute("data-email");
+        if (email) {
+          window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`, '_blank', 'noopener,noreferrer');
+        }
+      }
+    });
 
     async function fetchAlumni() {
       const year = document.getElementById("filterYear").value;
@@ -158,7 +171,7 @@
                 <div class="ac-badge">Class of ${user.graduationYear || "N/A"}</div>
                 <p><strong>Dept:</strong> ${user.course || "General"}</p>
                 <p><strong>At:</strong> ${user.jobPost || "Looking"} @ ${user.company || "N/A"}</p>
-                <a class="ac-btn" href="https://mail.google.com/mail/?view=cm&fs=1&to=${user.email}" target="_blank" rel="noopener noreferrer">Contact Alumni</a>
+                <button class="ac-btn" data-email="${user.email}">Contact Alumni</button>
               </div>
             </div>`;
         });
