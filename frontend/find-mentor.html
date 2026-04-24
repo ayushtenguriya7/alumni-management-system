@@ -93,7 +93,7 @@
 
   <div class="navbar">
     <div class="logo">AlumniPortal Pro</div>
-    <button class="back-btn" onclick="goBack()">← Return to Dashboard</button>
+    <button class="back-btn" id="backBtn">← Return to Dashboard</button>
   </div>
 
   <div class="container">
@@ -116,8 +116,8 @@
         <input type="text" id="bookingTopic" placeholder="e.g. Resume Review request">
       </div>
       <div class="modal-actions">
-        <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancel</button>
-        <button class="modal-btn modal-btn-submit" onclick="submitBooking()">Request Booking</button>
+        <button class="modal-btn modal-btn-cancel" id="cancelModalBtn">Cancel</button>
+        <button class="modal-btn modal-btn-submit" id="submitModalBtn">Request Booking</button>
       </div>
     </div>
   </div>
@@ -134,6 +134,18 @@
       else if (role === "alumni") window.location.href = "alumni/dashboard.html";
       else window.location.href = "student/dashboard.html";
     }
+
+    document.getElementById("backBtn").addEventListener("click", goBack);
+    document.getElementById("cancelModalBtn").addEventListener("click", closeModal);
+    document.getElementById("submitModalBtn").addEventListener("click", submitBooking);
+
+    document.getElementById("mentorsGrid").addEventListener("click", (e) => {
+      if (e.target.classList.contains("book-btn")) {
+        const id = e.target.getAttribute("data-id");
+        const name = e.target.getAttribute("data-name");
+        openModal(id, name);
+      }
+    });
 
     async function fetchMentors() {
       try {
@@ -159,7 +171,7 @@
                 ${m.mentorContact ? `<div class="mc-detail-row"><strong>Contact:</strong> ${m.mentorContact}</div>` : ''}
                 ${m.mentorLink ? `<div class="mc-detail-row"><strong>Meet Link:</strong> <a href="${m.mentorLink}" target="_blank" style="color:#a78bfa;text-decoration:none;">View Link</a></div>` : ''}
               </div>
-              <button class="book-btn" onclick="openModal('${m._id}', '${m.name.replace(/'/g, "\\'")}')">Book Appointment</button>
+              <button class="book-btn" data-id="${m._id}" data-name="${m.name.replace(/"/g, '&quot;')}">Book Appointment</button>
             </div>`;
         });
       } catch (err) { console.error(err); }
